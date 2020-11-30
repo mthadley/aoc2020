@@ -13,18 +13,20 @@ class AdventOfCode
     for_day(@options.day)
   end
 
-  def for_day(day)
+  def for_day(day_num)
     begin
-      require_relative "advent_of_code/day#{day}"
+      require_relative "advent_of_code/day#{day_num}"
     rescue LoadError
-      $stderr.puts "Error: Solution does not exist for day #{day}."
+      $stderr.puts "Error: Solution does not exist for day #{day_num}."
       exit 1
     end
 
-    day = self.class.const_get("Day#{day}")
+    day = self.class.const_get("Day#{day_num}")
     day = day.new
 
     puts <<~OUT
+      Day ##{day_num}
+      =========================
       Part 1: #{day.part1}
       Part 2: #{day.part2}
     OUT
