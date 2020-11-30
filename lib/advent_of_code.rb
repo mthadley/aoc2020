@@ -21,8 +21,7 @@ class AdventOfCode
       exit 1
     end
 
-    day = self.class.const_get("Day#{day_num}")
-    day = day.new
+    day = self.class.const_get("Day#{day_num}").new
 
     puts <<~OUT
       Day ##{day_num}
