@@ -1,7 +1,7 @@
 class Day
   def self.input_file(name, &block)
     @@input_filename = name
-    @@parser = block
+    @@input_parser = block
   end
 
   def part_one
@@ -20,10 +20,10 @@ class Day
         file_path = File.expand_path("../../input/#{@@input_filename}", __dir__)
         content = File.readlines(file_path)
 
-        if @@parser.nil?
+        if @@input_parser.nil?
           content
         else
-          @@parser.call(content)
+          @@input_parser.call(content)
         end
       end
   end
