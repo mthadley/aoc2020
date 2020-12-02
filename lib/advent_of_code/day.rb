@@ -10,11 +10,9 @@ class AdventOfCode
     end
 
     def part_one
-      "N/A"
     end
 
     def part_two
-      "N/A"
     end
 
     protected
