@@ -9,10 +9,10 @@ class AdventOfCode
       alias_method :has_input_file, :input_file
     end
 
-    def part_one
+    def part1
     end
 
-    def part_two
+    def part2
     end
 
     protected
