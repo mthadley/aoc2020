@@ -7,13 +7,13 @@ class AdventOfCode
     end
 
     def part1
-      find_two_sum(TARGET).inject(:*)
+      find_two_sum(TARGET).reduce(:*)
     end
 
     def part2
       input.each do |n|
         if possible_nums = find_two_sum(TARGET - n)
-          return [n, *possible_nums].inject(:*)
+          return [n, *possible_nums].reduce(:*)
         end
       end
 
