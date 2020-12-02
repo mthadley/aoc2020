@@ -28,9 +28,15 @@ class AdventOfCode
     puts <<~OUT
       Day ##{day_num}
       =========================
-      Part 1: #{day.part1}
-      Part 2: #{day.part2}
+      Part 1: #{get_answer(day, :part1)}
+      Part 2: #{get_answer(day, :part2)}
     OUT
+  end
+
+  private
+
+  def get_answer(day, part)
+    day.send(part) || "N/A"
   end
 
   class Options
