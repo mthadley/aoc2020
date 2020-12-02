@@ -36,7 +36,13 @@ class AdventOfCode
   private
 
   def get_answer(day, part)
-    day.send(part) || "N/A"
+    result = day.send(part)
+
+    if result.nil?
+      "N/A"
+    else
+      result
+    end
   end
 
   class Options
