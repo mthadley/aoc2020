@@ -23,17 +23,13 @@ class AdventOfCode
     private
 
     def find_two_sum(target)
-      sum_map = build_sum_map(target)
+      sum_map = input.map { |n| [target - n, n] }.to_h
 
       first = input.find { |n| sum_map.has_key?(n) }
       second = sum_map[first]
 
       result = [first, second]
       result if result.all?
-    end
-
-    def build_sum_map(target)
-      input.map { |n| [target - n, n] }.to_h
     end
   end
 end
