@@ -1,8 +1,12 @@
 class AdventOfCode
   class Day
-    def self.input_file(name, &block)
+    def self.input_file(name = "#{self.name.split("::").last.downcase}.txt", &block)
       @@input_filename = name
       @@input_parser = block
+    end
+
+    class << self
+      alias_method :has_input_file, :input_file
     end
 
     def part_one

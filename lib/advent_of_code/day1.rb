@@ -2,9 +2,7 @@ class AdventOfCode
   class Day1 < Day
     TARGET = 2020
 
-    input_file "day1.txt" do |lines|
-      lines.map(&:to_i)
-    end
+    input_file { |lines| lines.map(&:to_i) }
 
     def part1
       find_two_sum(TARGET).reduce(:*)
