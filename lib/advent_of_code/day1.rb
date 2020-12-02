@@ -33,9 +33,7 @@ class AdventOfCode
     end
 
     def build_sum_map(target)
-      input.each_with_object({}) do |n, map|
-        map[target - n] = n
-      end
+      input.map { |n| [target - n, n] }.to_h
     end
   end
 end
