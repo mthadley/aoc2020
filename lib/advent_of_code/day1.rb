@@ -12,9 +12,7 @@ class AdventOfCode
 
     def part2
       input.each do |n|
-        possible_nums = find_two_sum(TARGET - n)
-
-        if possible_nums
+        if possible_nums = find_two_sum(TARGET - n)
           return [n, *possible_nums].inject(:*)
         end
       end
