@@ -21,7 +21,7 @@ class AdventOfCode
       @input ||=
         begin
           file_path = File.expand_path("../../input/#{@@input_filename}", __dir__)
-          content = File.readlines(file_path)
+          content = File.readlines(file_path).map(&:chomp)
 
           if @@input_parser.nil?
             content

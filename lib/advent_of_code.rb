@@ -2,6 +2,7 @@ require "optparse"
 
 class AdventOfCode
   autoload :Day, "advent_of_code/day"
+  autoload :Point, "advent_of_code/point"
 
   def self.play
     new(Options.parse!).play
