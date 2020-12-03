@@ -65,7 +65,7 @@ class AdventOfCode
       end
 
       def at(point)
-        grid[point.y]&.send(:[], point.x % @width)
+        grid[point.y]&.at(point.x % @width)
       end
     end
   end
