@@ -27,7 +27,7 @@ class AdventOfCode
       total_trees = 0
 
       while at_location = map.at(location)
-        total_trees += 1 if at_location == :tree
+        total_trees += 1 if at_location == "#"
         location += step
       end
 
@@ -50,13 +50,7 @@ class AdventOfCode
       end
 
       def add_row(string)
-        new_row =
-          string.chars.map do |char|
-            case char
-            when "." then :open
-            when "#" then :tree
-            end
-          end
+        new_row = string.chars
 
         @width = [width, new_row.size].max
         grid << new_row
