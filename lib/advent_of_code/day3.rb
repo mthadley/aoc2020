@@ -42,21 +42,18 @@ class AdventOfCode
     end
 
     class Map
-      attr_reader :grid, :width
+      attr_reader :grid
 
       def initialize
         @grid = []
-        @width = 0
       end
 
       def add_row(string)
-        new_row = string.chars
-
-        @width = [width, new_row.size].max
-        grid << new_row
+        grid << string.chars
       end
 
       def at(point)
+        width = grid.first.size
         grid[point.y]&.at(point.x % width)
       end
     end
