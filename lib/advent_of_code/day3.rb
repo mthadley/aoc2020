@@ -36,15 +36,13 @@ class AdventOfCode
 
     def map
       @map ||=
-        begin
-          map = Map.new
-          input.each { |line| map.add_row(line) }
-          map
+        input.each_with_object(Map.new) do |line, map|
+          map.add_row(line)
         end
     end
 
     class Map
-      attr_reader :grid
+      attr_reader :grid, :width
 
       def initialize
         @grid = []
@@ -60,12 +58,12 @@ class AdventOfCode
             end
           end
 
-        @width = [@width, new_row.size].max
-        @grid << new_row
+        @width = [width, new_row.size].max
+        grid << new_row
       end
 
       def at(point)
-        grid[point.y]&.at(point.x % @width)
+        grid[point.y]&.at(point.x % width)
       end
     end
   end
