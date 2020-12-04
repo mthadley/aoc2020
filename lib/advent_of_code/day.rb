@@ -1,8 +1,13 @@
 class AdventOfCode
   class Day
-    def self.input_file(name = "#{self.name.split("::").last.downcase}.txt", &block)
+    def self.input_file(
+      name = "#{self.name.split("::").last.downcase}.txt",
+      split_lines: true,
+      &block
+    )
       @@input_filename = name
       @@input_parser = block
+      @@input_split_lines = split_lines
     end
 
     class << self
@@ -21,7 +26,13 @@ class AdventOfCode
       @input ||=
         begin
           file_path = File.expand_path("../../input/#{@@input_filename}", __dir__)
-          content = File.readlines(file_path).map(&:chomp)
+
+          content =
+            if @@input_split_lines
+              File.readlines(file_path, chomp: true)
+            else
+              File.read(file_path)
+            end
 
           if @@input_parser.nil?
             content
