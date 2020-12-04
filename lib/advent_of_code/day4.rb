@@ -31,7 +31,6 @@ class AdventOfCode
 
     class Passport
       REQUIRED_FIELDS = %i[byr iyr eyr hgt hcl ecl pid]
-      OPTIONAL_FIELDS = %[cid]
 
       FIELD_FORMAT = /(?<name>\w+):(?<value>.+?)(\s|$)/m
 
