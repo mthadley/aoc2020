@@ -2,11 +2,11 @@ class AdventOfCode
   class Day3 < Day
     has_input_file
 
-    def part1
+    part1 answer: 225 do
       count_trees(step: Point.new(3, 1))
     end
 
-    def part2
+    part2 answer: 1115775000 do
       steps = [
         Point.new(1, 1),
         Point.new(3, 1),

@@ -4,20 +4,18 @@ class AdventOfCode
       lines.map { |line| Seat.parse(line) }
     end
 
-    def part1
+    part1 answer: 888 do
       input.map(&:id).max
     end
 
-    def part2
+    part2 answer: 522 do
       sorted_seats = input.sort_by(&:id)
       min = sorted_seats.first.id
       max = sorted_seats.last.id
 
       (min..max).zip(sorted_seats).each do |expected, seat|
-        return seat.id - 1 if seat.id != expected
+        break seat.id - 1 if seat.id != expected
       end
-
-      nil
     end
 
     class Seat

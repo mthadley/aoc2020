@@ -10,6 +10,22 @@ class AdventOfCode
       @@input_split_lines = split_lines
     end
 
+    def self.part1(**args, &block)
+      add_part(:part1, **args, &block)
+    end
+
+    def self.part2(**args, &block)
+      add_part(:part2, **args, &block)
+    end
+
+    def self.add_part(part, answer: nil, &block)
+      define_method(part) do
+        result = instance_eval(&block)
+
+        {answer: result, correct: answer && result == answer }
+      end
+    end
+
     class << self
       alias_method :has_input_file, :input_file
     end

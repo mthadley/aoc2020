@@ -4,18 +4,16 @@ class AdventOfCode
 
     input_file { |lines| lines.map(&:to_i) }
 
-    def part1
+    part1 answer: 445536 do
       find_two_sum(TARGET).reduce(:*)
     end
 
-    def part2
+    part2 answer: 138688160 do
       input.each do |n|
         if possible_nums = find_two_sum(TARGET - n)
-          return [n, *possible_nums].reduce(:*)
+          break [n, *possible_nums].reduce(:*)
         end
       end
-
-      -1
     end
 
     private

@@ -2,11 +2,11 @@ class AdventOfCode
   class Day4 < Day
     has_input_file split_lines: false
 
-    def part1
+    part1 answer: 228 do
       passport_file.passports.count(&:has_all_fields?)
     end
 
-    def part2
+    part2 answer: 175 do
       passport_file.passports.count(&:valid?)
     end
 

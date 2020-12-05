@@ -39,11 +39,22 @@ class AdventOfCode
   def get_answer(day, part)
     result = day.send(part)
 
-    if result.nil?
+    if result[:answer].nil?
       "N/A"
     else
-      result
+      format_answer(result[:answer], result[:correct])
     end
+  end
+
+  def format_answer(result, correct)
+    correctness_sym =
+      case correct
+      when nil then "❔"
+      when false then "❌"
+      when true then "✅"
+      end
+
+    "#{result} #{correctness_sym}"
   end
 
   class Options

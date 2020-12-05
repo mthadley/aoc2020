@@ -4,11 +4,11 @@ class AdventOfCode
       lines.map { |line| Password.parse(line) }
     end
 
-    def part1
+    part1 answer: 625 do
       input.count(&:valid_for_range_policy?)
     end
 
-    def part2
+    part2 answer: 391 do
       input.count(&:valid_for_index_policy?)
     end
 
