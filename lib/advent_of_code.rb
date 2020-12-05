@@ -13,7 +13,22 @@ class AdventOfCode
   end
 
   def play
-    for_day(@options.day)
+    if @options.day
+      puts for_day(@options.day)
+    else
+      all_days.each { |day| puts for_day(day), "\n" }
+    end
+  end
+
+  def all_days
+    Dir.children(File.expand_path("advent_of_code", __dir__)).
+      map do |name|
+        if /day(?<day_num>\d+)\.rb$/ =~ name
+          day_num.to_i
+        end
+      end.
+      compact.
+      sort
   end
 
   def for_day(day_num)
@@ -26,7 +41,7 @@ class AdventOfCode
 
     day = self.class.const_get("Day#{day_num}").new
 
-    puts <<~OUT
+    <<~OUT
       Day ##{day_num}
       =========================
       Part 1: #{get_answer(day, :part1)}
