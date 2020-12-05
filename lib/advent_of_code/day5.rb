@@ -1,7 +1,7 @@
 class AdventOfCode
   class Day5 < Day
     input_file do |lines|
-      lines.map { |line| Seat.parse!(line) }
+      lines.map { |line| Seat.parse(line) }
     end
 
     def part1
@@ -21,7 +21,7 @@ class AdventOfCode
     end
 
     class Seat
-      def self.parse!(string)
+      def self.parse(string)
         row_s = string.chars.take(7)
         col_s = string.chars.drop(7)
 
