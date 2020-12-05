@@ -30,11 +30,8 @@ class AdventOfCode
       alias_method :has_input_file, :input_file
     end
 
-    def part1
-    end
-
-    def part2
-    end
+    part1 {}
+    part2 {}
 
     protected
 
