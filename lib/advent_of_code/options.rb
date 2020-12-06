@@ -1,4 +1,4 @@
-class AdventOfCode
+module AdventOfCode
   class Options
     attr_accessor :day
 

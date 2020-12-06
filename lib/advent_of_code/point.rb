@@ -1,4 +1,4 @@
-class AdventOfCode
+module AdventOfCode
   class Point
     attr_reader :x, :y
 

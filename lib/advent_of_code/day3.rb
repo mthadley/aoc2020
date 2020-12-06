@@ -1,4 +1,4 @@
-class AdventOfCode
+module AdventOfCode
   class Day3 < Day
     has_input_file
 

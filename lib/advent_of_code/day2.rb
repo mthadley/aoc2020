@@ -1,4 +1,4 @@
-class AdventOfCode
+module AdventOfCode
   class Day2 < Day
     input_file do |lines|
       lines.map { |line| Password.parse(line) }

@@ -1,4 +1,4 @@
-class AdventOfCode
+module AdventOfCode
   class Day4 < Day
     has_input_file split_lines: false
 

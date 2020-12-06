@@ -1,4 +1,4 @@
-class AdventOfCode
+module AdventOfCode
   class Day1 < Day
     TARGET = 2020
 

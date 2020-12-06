@@ -1,4 +1,4 @@
-class AdventOfCode
+module AdventOfCode
   class Day
     def self.input_file(
       name = "#{self.name.split("::").last.downcase}.txt",
