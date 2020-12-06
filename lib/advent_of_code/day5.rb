@@ -1,7 +1,7 @@
 module AdventOfCode
   class Day5 < Day
     input_file do |lines|
-      lines.map { |line| Seat.parse(line) }
+      lines.map { Seat.parse(_1) }
     end
 
     part1 answer: 888 do

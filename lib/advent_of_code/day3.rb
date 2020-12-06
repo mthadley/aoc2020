@@ -15,9 +15,7 @@ module AdventOfCode
         Point.new(1, 2)
       ]
 
-      steps.
-        map { |step| count_trees(step: step) }.
-        reduce(:*)
+      steps.map { count_trees(step: _1) }.reduce(:*)
     end
 
     private

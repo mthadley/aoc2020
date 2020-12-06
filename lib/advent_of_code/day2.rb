@@ -1,7 +1,7 @@
 module AdventOfCode
   class Day2 < Day
     input_file do |lines|
-      lines.map { |line| Password.parse(line) }
+      lines.map { Password.parse(_1) }
     end
 
     part1 answer: 625 do

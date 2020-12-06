@@ -20,7 +20,7 @@ module AdventOfCode
       attr_reader :passports
 
       def self.parse!(string)
-        passports = string.split("\n\n").map { |fields| Passport.parse!(fields) }
+        passports = string.split("\n\n").map { Passport.parse!(_1) }
         new(passports)
       end
 
@@ -55,7 +55,7 @@ module AdventOfCode
       end
 
       def has_all_fields?
-        REQUIRED_FIELDS.all? { |field| @fields.has_key?(field) }
+        REQUIRED_FIELDS.all? { @fields.has_key?(_1) }
       end
 
       def valid?

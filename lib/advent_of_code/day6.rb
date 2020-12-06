@@ -3,7 +3,7 @@ require "set"
 module AdventOfCode
   class Day6 < Day
     input_file split_lines: false do |content|
-      content.split("\n\n").map { |group| Group.parse(group) }
+      content.split("\n\n").map { Group.parse(_1) }
     end
 
     part1 answer: 6382 do
