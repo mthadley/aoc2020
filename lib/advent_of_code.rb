@@ -25,12 +25,11 @@ module AdventOfCode
     def all_days
       @all_days ||=
         Dir.children(File.expand_path("advent_of_code", __dir__)).
-          map do |name|
+          filter_map do |name|
             if /day(?<day_num>\d+)\.rb$/ =~ name
               day_num.to_i
             end
           end.
-          compact.
           sort
     end
 
