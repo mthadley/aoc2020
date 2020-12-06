@@ -14,7 +14,7 @@ module AdventOfCode
 
     private
 
-    class Password
+    Password = Struct.new(:content, :special_char, :first_num, :second_num, keyword_init: true) do
       FORMAT = /^
         (?<first>\d+)
         -
@@ -24,8 +24,6 @@ module AdventOfCode
         \s+
         (?<content>\w*)
       $/x
-
-      attr_reader :content, :special_char, :first_num, :second_num
 
       def self.parse(string)
         match = FORMAT.match(string)
@@ -38,13 +36,6 @@ module AdventOfCode
           first_num: match[:first].to_i,
           second_num: match[:second].to_i
         )
-      end
-
-      def initialize(content:, special_char:, first_num:, second_num:)
-        @content = content
-        @special_char = special_char
-        @first_num = first_num
-        @second_num = second_num
       end
 
       def valid_for_range_policy?
