@@ -10,7 +10,7 @@ module AdventOfCode
       input.sum(&:total_questions_answered_yes)
     end
 
-    part2 do
+    part2 answer: 3197 do
       input.sum(&:total_quetions_all_answered_yes)
     end
 
