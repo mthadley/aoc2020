@@ -11,7 +11,7 @@ module AdventOfCode
     end
 
     part2 answer: 3197 do
-      input.sum(&:total_quetions_all_answered_yes)
+      input.sum(&:total_questions_all_answered_yes)
     end
 
     class Group
@@ -31,7 +31,7 @@ module AdventOfCode
         @answers.reduce(:|).size
       end
 
-      def total_quetions_all_answered_yes
+      def total_questions_all_answered_yes
         @answers.reduce(:&).size
       end
     end
