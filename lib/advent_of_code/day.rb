@@ -22,7 +22,7 @@ class AdventOfCode
       define_method(part) do
         result = instance_eval(&block)
 
-        {answer: result, correct: answer && result == answer }
+        Result.new(result, answer)
       end
     end
 
@@ -32,6 +32,19 @@ class AdventOfCode
 
     part1 {}
     part2 {}
+
+    class Result
+      attr_reader :answer
+
+      def initialize(answer, expected)
+        @answer = answer
+        @expected = expected
+      end
+
+      def correct?
+        @expected && answer == @expected
+      end
+    end
 
     protected
 
