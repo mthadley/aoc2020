@@ -16,30 +16,24 @@ class AdventOfCode
     if @options.day
       puts for_day(@options.day)
     else
-      all_days.each { |day| puts for_day(day), "\n" }
+      puts all_days.map { |day| for_day(day) }.join("\n")
     end
   end
 
   def all_days
-    Dir.children(File.expand_path("advent_of_code", __dir__)).
-      map do |name|
-        if /day(?<day_num>\d+)\.rb$/ =~ name
-          day_num.to_i
-        end
-      end.
-      compact.
-      sort
+    @all_days ||=
+      Dir.children(File.expand_path("advent_of_code", __dir__)).
+        map do |name|
+          if /day(?<day_num>\d+)\.rb$/ =~ name
+            day_num.to_i
+          end
+        end.
+        compact.
+        sort
   end
 
   def for_day(day_num)
-    begin
-      require_relative "advent_of_code/day#{day_num}"
-    rescue LoadError
-      $stderr.puts "Error: Solution does not exist for day #{day_num}."
-      exit 1
-    end
-
-    day = self.class.const_get("Day#{day_num}").new
+    day = load_day_class(day_num)
 
     <<~OUT
       Day ##{day_num}
@@ -50,6 +44,20 @@ class AdventOfCode
   end
 
   private
+
+  def load_day_class(day_num)
+    begin
+      path = "advent_of_code/day#{day_num}"
+      require_relative path
+    rescue LoadError => e
+      raise unless e.path.end_with?(path)
+
+      $stderr.puts "Error: Solution does not exist for day #{day_num}."
+      exit 1
+    end
+
+    self.class.const_get("Day#{day_num}").new
+  end
 
   def get_answer(day, part)
     result = day.send(part)
