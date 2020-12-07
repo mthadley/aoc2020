@@ -43,12 +43,9 @@ module AdventOfCode
       end
 
       def path_to(needle, current:, seen: Set.new)
-        edges = @edges[current]
-
         return seen if needle == current
-        return nil if edges.empty?
 
-        edges.each do |edge|
+        @edges[current].each do |edge|
           next if seen.member?(edge.bag)
 
           if path = path_to(needle, current: edge.bag, seen: Set[edge.bag] | seen)
@@ -93,10 +90,7 @@ module AdventOfCode
         @s.skip(/\s+contain\s+/)
 
         deps = []
-        until @s.eos?
-          deps << parse_dep!
-        end
-
+        deps << parse_dep! until @s.eos?
         deps
       end
 
@@ -125,6 +119,5 @@ module AdventOfCode
         Bag.new(condition: @s[:condition], color: @s[:color])
       end
     end
-
   end
 end
