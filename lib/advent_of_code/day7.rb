@@ -21,73 +21,64 @@ module AdventOfCode
 
     class RuleSet
       def initialize(rules)
-        @edges = {}
-
-        rules.each do |rule|
-          @edges[rule.key] = rule.deps
-        end
+        @rules = rules
       end
 
-      def colors_needed_for(bag)
-        colors = Set.new
-        seen = Set.new
+      def colors_needed_for(bag, seen: Set.new)
+        edges = edges_to_parent[bag]
 
-        @edges.keys.each do |start_bag|
-          next if start_bag == bag
+        return if edges.nil?
 
-          if seen.member?(start_bag)
-            colors.add(start_bag)
-          elsif path = path_to(bag, current: start_bag)
-            seen |= path
-            colors.add(start_bag)
-          end
-        end
-
-        colors.size
-      end
-
-      def path_to(needle, current:, seen: Set.new)
-        return seen if needle == current
-
-        @edges[current].each do |edge|
+        edges.each do |edge|
           next if seen.member?(edge.bag)
 
-          if path = path_to(needle, current: edge.bag, seen: Set[edge.bag] | seen)
-            return path
-          end
+          seen.add(edge.bag)
+          colors_needed_for(edge.bag, seen: seen)
         end
 
-        nil
+        seen.size
       end
 
       def total_bags_for(bag)
-        @edges[bag].sum do |edge|
+        edges_to_children[bag].sum do |edge|
           edge.count * (total_bags_for(edge.bag) + 1)
         end
       end
-    end
 
+      private
+
+      def edges_to_parent
+        @edges_to_parent ||= @rules.each_with_object({}) do |rule, edges|
+          rule.deps.each do |edge|
+            edges[edge.bag] ||= []
+            edges[edge.bag] << BagCount.new(count: edge.count, bag: rule.key)
+          end
+        end
+      end
+
+      def edges_to_children
+        @edges_to_children ||= @rules.each_with_object({}) do |rule, edges|
+          edges[rule.key] = rule.deps
+        end
+      end
+    end
 
     Rule = Struct.new(:key, :deps, keyword_init: true)
     Bag = Struct.new(:condition, :color, keyword_init: true)
     BagCount = Struct.new(:bag, :count, keyword_init: true)
 
-    class RuleParser
+    RuleParser = Struct.new(:s) do
       def self.parse!(line)
         new(StringScanner.new(line)).parse!
       end
 
-      def initialize(scanner)
-        @s = scanner
-      end
-
       def parse!
-        key_bag = BagParser.new(@s).parse!
+        key_bag = BagParser.new(s).parse!
 
-        fail ArgumentError, "Expected a bag at #{@s.pos}" unless key_bag
+        fail ArgumentError, "Expected a bag at #{s.pos}" unless key_bag
 
         deps =
-          if @s.match?(/ contain no other bags./)
+          if s.match?(/ contain no other bags./)
             []
           else
             parse_deps!
@@ -97,36 +88,34 @@ module AdventOfCode
       end
 
       def parse_deps!
-        @s.skip(/\s+contain\s+/)
+        s.skip(/\s+contain\s+/)
 
         deps = []
-        deps << parse_dep! until @s.eos?
+        deps << parse_dep! until s.eos?
         deps
       end
 
+      private
+
       def parse_dep!
-        @s.scan(/(?<count>\d+)\s+/) or fail ArgumentError, "Expected count: \"#{@s.rest}\""
-        count = @s[:count]
+        s.scan(/(?<count>\d+)\s+/) or fail ArgumentError, "Expected count: \"#{s.rest}\""
+        count = s[:count]
 
-        bag = BagParser.new(@s).parse!
+        bag = BagParser.new(s).parse!
 
-        @s.scan(/,\s+|\./) or fail ArgumentError, "Expected period or comma: \"#{@s.rest}\""
+        s.scan(/,\s+|\./) or fail ArgumentError, "Expected period or comma: \"#{s.rest}\""
 
         BagCount.new(bag: bag, count: count.to_i)
       end
     end
 
-    class BagParser
+    BagParser = Struct.new(:s) do
       BAG_FORMAT = /(?<condition>\w+)\s+(?<color>\w+)\s+bags?/
 
-      def initialize(string_scanner)
-        @s = string_scanner
-      end
-
       def parse!
-        @s.scan BAG_FORMAT or fail ArgumentError, "Invalid bag: #{@s.rest}"
+        s.scan BAG_FORMAT or fail ArgumentError, "Invalid bag: #{s.rest}"
 
-        Bag.new(condition: @s[:condition], color: @s[:color])
+        Bag.new(condition: s[:condition], color: s[:color])
       end
     end
   end
