@@ -12,10 +12,10 @@ module AdventOfCode
     private
 
     def rules
-      @rules ||= RuleGraph.new(input.map { RuleParser.parse!(_1) })
+      @rules ||= RuleSet.new(input.map { RuleParser.parse!(_1) })
     end
 
-    class RuleGraph
+    class RuleSet
       def initialize(rules)
         @edges = {}
 
