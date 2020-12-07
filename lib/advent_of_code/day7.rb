@@ -9,6 +9,10 @@ module AdventOfCode
       rules.colors_needed_for(Bag.new(condition: "shiny", color: "gold"))
     end
 
+    part2 answer: 57281 do
+      rules.total_bags_for(Bag.new(condition: "shiny", color: "gold"))
+    end
+
     private
 
     def rules
@@ -54,6 +58,12 @@ module AdventOfCode
         end
 
         nil
+      end
+
+      def total_bags_for(bag)
+        @edges[bag].sum do |edge|
+          edge.count * (total_bags_for(edge.bag) + 1)
+        end
       end
     end
 
@@ -102,7 +112,7 @@ module AdventOfCode
 
         @s.scan(/,\s+|\./) or fail ArgumentError, "Expected period or comma: \"#{@s.rest}\""
 
-        BagCount.new(bag: bag, count: count)
+        BagCount.new(bag: bag, count: count.to_i)
       end
     end
 
