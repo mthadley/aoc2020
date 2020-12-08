@@ -12,29 +12,20 @@ module AdventOfCode
     end
 
     part2 answer: 1270 do
-      acc_after_fix(GameConsole.parse_instructions!(input))
+      console = GameConsole.parse_instructions!(input)
+
+      console.instructions.count.times do |idx|
+        next unless fixable?(console.instructions[idx])
+
+        console.reset!
+        flip_instruction!(console, idx)
+
+        break console.run.acc
+      rescue GameConsole::LoopError
+      end
     end
 
     private
-
-    def acc_after_fix(console)
-      mod_idx = 0
-
-      begin
-        console.reset!
-
-        mod_idx += console.instructions.drop(mod_idx).find_index { fixable?(_1) }
-
-        flip_instruction!(console, mod_idx)
-
-        console.run
-      rescue GameConsole::LoopError
-        mod_idx += 1
-        retry
-      end
-
-      console.acc
-    end
 
     def fixable?(ins)
       [:jmp, :nop].include?(ins.code)
@@ -61,7 +52,7 @@ module AdventOfCode
       attr_reader :acc, :ic
 
       def self.parse_instructions!(lines)
-        new(lines.map { Instruction.parse!(_1) })
+        new(lines.map { Instruction.parse(_1) })
       end
 
       def initialize(instructions)
@@ -78,12 +69,14 @@ module AdventOfCode
       def run
         lines_ran = Set.new
 
-        while ic < instructions.size
+        while ic < instructions.count
           fail LoopError if lines_ran.member?(ic)
 
           lines_ran.add(ic)
           execute(instructions[ic])
         end
+
+        self
       end
 
       private
@@ -104,14 +97,9 @@ module AdventOfCode
     end
 
     Instruction = Struct.new(:code, :arg, keyword_init: true) do
-      INSTRUCTION_FORMAT = /^(?<instruction>\w+)\s+(?<arg>[+-]\d+)$/
-
-      def self.parse!(string)
-        if match = INSTRUCTION_FORMAT.match(string)
-          new(code: match[:instruction].to_sym, arg: match[:arg].to_i)
-        else
-          fail ArgumentError, "Not a valid instruction: \"#{string}\""
-        end
+      def self.parse(string)
+        instruction, arg = string.split(/\s+/)
+        new(code: instruction.to_sym, arg: arg.to_i)
       end
     end
   end
