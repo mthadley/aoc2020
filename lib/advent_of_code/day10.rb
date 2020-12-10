@@ -52,8 +52,5 @@ module AdventOfCode
           end
         end
     end
-
-    def all_joltages
-    end
   end
 end
