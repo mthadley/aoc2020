@@ -1,5 +1,11 @@
 module AdventOfCode
   class Day
+    @@slow = false
+
+    def self.slow!
+      @@slow = true
+    end
+
     def self.input_file(
       name = "#{self.name.split("::").last.downcase}.txt",
       split_lines: true,
@@ -44,6 +50,10 @@ module AdventOfCode
       def correct?
         @expected && answer == @expected
       end
+    end
+
+    def slow?
+      @@slow
     end
 
     protected

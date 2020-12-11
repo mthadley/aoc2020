@@ -2,6 +2,8 @@
 
 module AdventOfCode
   class Day11 < Day
+    slow!
+
     has_input_file
 
     part1 answer: 2273 do

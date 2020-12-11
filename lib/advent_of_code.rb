@@ -18,7 +18,7 @@ module AdventOfCode
       if @options.day
         puts for_day(@options.day)
       else
-        puts all_days.map { |day| for_day(day) }.join("\n")
+        puts all_days.map { |day| for_day(day, skip_slow: true) }.join("\n")
       end
     end
 
@@ -33,15 +33,19 @@ module AdventOfCode
           sort
     end
 
-    def for_day(day_num)
+    def for_day(day_num, skip_slow: false)
       day = load_day_class(day_num)
 
-      <<~OUT
-        Day ##{day_num}
-        =========================
-        Part 1: #{get_answer(day, :part1)}
-        Part 2: #{get_answer(day, :part2)}
-      OUT
+      if day.slow?
+        "Skipping Day ##{day_num} (Slow)"
+      else
+        <<~OUT
+          Day ##{day_num}
+          =========================
+          Part 1: #{get_answer(day, :part1)}
+          Part 2: #{get_answer(day, :part2)}
+        OUT
+      end
     end
 
     private
