@@ -13,6 +13,22 @@ module AdventOfCode
         filter { origin != _1 }
     end
 
+    def self.north
+      new(0, 1)
+    end
+
+    def self.south
+      new(0, -1)
+    end
+
+    def self.east
+      new(1, 0)
+    end
+
+    def self.west
+      new(-1, 0)
+    end
+
     def initialize(x, y)
       @x = x
       @y = y
@@ -26,6 +42,16 @@ module AdventOfCode
 
     def +(other)
       self.class.new(x + other.x, y + other.y)
+    end
+
+    def *(number)
+      fail ArgumentError, "#{number.class} is not a number" unless number.is_a?(Numeric)
+
+      self.class.new(x * number, y * number)
+    end
+
+    def inspect
+      "(#{x}, #{y})"
     end
   end
 end
