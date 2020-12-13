@@ -31,9 +31,7 @@ module AdventOfCode
     end
 
     def wait_time(bus_id)
-      time = 0
-      time += bus_id until time >= earliest_timestamp
-      time - earliest_timestamp
+      bus_id - (earliest_timestamp % bus_id)
     end
 
     def earliest_timestamp
