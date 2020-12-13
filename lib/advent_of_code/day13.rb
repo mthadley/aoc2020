@@ -26,10 +26,6 @@ module AdventOfCode
 
     private
 
-    def departs_at?(bus_id, timestamp)
-      (timestamp % bus_id).zero?
-    end
-
     def wait_time(bus_id)
       bus_id - (earliest_timestamp % bus_id)
     end
