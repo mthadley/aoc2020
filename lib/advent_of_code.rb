@@ -37,7 +37,7 @@ module AdventOfCode
       day = load_day_class(day_num)
 
       if skip_slow && day.slow? && !@options.run_slow?
-        "Skipping Day ##{day_num} (Slow)"
+        "Skipping Day ##{day_num} (Slow)\n"
       else
         <<~OUT
           Day ##{day_num}

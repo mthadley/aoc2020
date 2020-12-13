@@ -1,9 +1,7 @@
 module AdventOfCode
   class Day
-    @@slow = false
-
     def self.slow!
-      @@slow = true
+      define_method(:slow?) { true }
     end
 
     def self.input_file(
@@ -11,9 +9,9 @@ module AdventOfCode
       split_lines: true,
       &block
     )
-      @@input_filename = name
-      @@input_parser = block
-      @@input_split_lines = split_lines
+      define_method(:input_filename) { name }
+      define_method(:input_parser) { block }
+      define_method(:input_split_lines?) { split_lines }
     end
 
     def self.part1(**args, &block)
@@ -53,7 +51,7 @@ module AdventOfCode
     end
 
     def slow?
-      @@slow
+      false
     end
 
     protected
@@ -61,19 +59,19 @@ module AdventOfCode
     def input
       @input ||=
         begin
-          file_path = File.expand_path("../../input/#{@@input_filename}", __dir__)
+          file_path = File.expand_path("../../input/#{input_filename}", __dir__)
 
           content =
-            if @@input_split_lines
+            if input_split_lines?
               File.readlines(file_path, chomp: true)
             else
               File.read(file_path)
             end
 
-          if @@input_parser.nil?
+          if input_parser.nil?
             content
           else
-            @@input_parser.call(content)
+            input_parser.call(content)
           end
         end
     end
