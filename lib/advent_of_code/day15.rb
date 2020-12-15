@@ -1,10 +1,22 @@
 module AdventOfCode
   class Day15 < Day
+    slow!
+
     INPUT = [1, 20, 8, 12, 0, 14].freeze
 
     part1 answer: 492 do
+      num_for_turn(2020)
+    end
+
+    part2 answer: 63644 do
+      num_for_turn(30000000)
+    end
+
+    private
+
+    def num_for_turn(turn)
       game = Game.new(INPUT)
-      game.next_turn! until game.turn == 2020
+      game.next_turn! until game.turn == turn
       game.next_num
     end
 
