@@ -25,7 +25,7 @@ module AdventOfCode
 
       def initialize(nums)
         @turn = 1
-        @spoken = {}
+        @spoken = Hash.new { |h, v| h[v] = [] }
         @last_num = nil
 
         nums.each { next_turn!(_1) }
@@ -33,7 +33,7 @@ module AdventOfCode
 
       def next_turn!(num = nil)
         @last_num = num || next_num
-        update_spoken(@last_num)
+        @spoken[@last_num].unshift(@turn)
         @turn += 1
       end
 
@@ -44,13 +44,6 @@ module AdventOfCode
           recent, second_recent = @spoken[@last_num].take(2)
           recent - second_recent
         end
-      end
-
-      private
-
-      def update_spoken(num)
-        @spoken[num] ||= []
-        @spoken[num].unshift(@turn)
       end
     end
   end
