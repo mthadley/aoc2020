@@ -33,7 +33,7 @@ module AdventOfCode
 
       def next_turn!(num = nil)
         @last_num = num || next_num
-        @spoken[@last_num].unshift(@turn)
+        @spoken[@last_num] << @turn
         @turn += 1
       end
 
@@ -41,7 +41,7 @@ module AdventOfCode
         if @spoken[@last_num].size == 1
           0
         else
-          recent, second_recent = @spoken[@last_num].take(2)
+          second_recent, recent = @spoken[@last_num].last(2)
           recent - second_recent
         end
       end
