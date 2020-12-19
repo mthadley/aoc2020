@@ -7,10 +7,9 @@ module AdventOfCode
     end
 
     def self.cardinals
-      [-1, 0, 1].
-        repeated_permutation(2).
-        map { Point.new(_1, _2) }.
-        filter { origin != _1 }
+      cardinals = [-1, 0, 1].repeated_permutation(2).map { new(_1, _2) }
+      cardinals.delete(origin)
+      cardinals
     end
 
     def self.north
