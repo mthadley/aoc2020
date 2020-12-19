@@ -2,29 +2,35 @@ require "set"
 
 module AdventOfCode
   class Day17 < Day
+    slow!
+
     has_input_file
 
     part1 answer: 295 do
-      space = initial_space
+      space = init_space(Space3D.new) { |x, y| Point3D.new(x, y, 0) }
+      6.times { space = space.succ }
+      space.active_count
+    end
+
+    part2 answer: 1972 do
+      space = init_space(Space4D.new) { |x, y| Point4D.new(x, y, 0, 0) }
       6.times { space = space.succ }
       space.active_count
     end
 
     private
 
-    def initial_space
-      space = Space.new
-
+    def init_space(space)
       input.each.with_index do |line, y|
         line.chars.each.with_index do |cell, x|
-          space.activate(Point.new(x, y, 0)) if cell == "#"
+          space.activate(yield x, y) if cell == "#"
         end
       end
 
       space
     end
 
-    class Space
+    class Space3D
       def initialize(set = Set.new)
         @space = set
       end
@@ -42,7 +48,7 @@ module AdventOfCode
       end
 
       def active_count_around(point)
-        Point.ordinals.count { |ord| active?(point + ord) }
+        point_class.ordinals.count { |ord| active?(point + ord) }
       end
 
       def succ
@@ -61,13 +67,17 @@ module AdventOfCode
         next_space
       end
 
-      private
+      protected
+
+      def point_class
+        Point3D
+      end
 
       def each_contained_point
         range_for(:x).each do |x|
           range_for(:y).each do |y|
             range_for(:z).each do |z|
-              yield Point.new(x, y, z)
+              yield point_class.new(x, y, z)
             end
           end
         end
@@ -79,7 +89,28 @@ module AdventOfCode
       end
     end
 
-    class Point
+    class Space4D < Space3D
+
+      protected
+
+      def point_class
+        Point4D
+      end
+
+      def each_contained_point
+        range_for(:x).each do |x|
+          range_for(:y).each do |y|
+            range_for(:z).each do |z|
+              range_for(:z).each do |w|
+                yield point_class.new(x, y, z, w)
+              end
+            end
+          end
+        end
+      end
+    end
+
+    class Point3D
       attr_reader :x, :y, :z
 
       def self.origin
@@ -108,14 +139,42 @@ module AdventOfCode
 
       alias_method :eql?, :==
 
-      def inspect
-        "(#{x}, #{y}, #{z})"
-      end
-
-      alias_method :to_s, :inspect
-
       def hash
         [x, y, z].hash
+      end
+    end
+
+    class Point4D
+      attr_reader :x, :y, :z, :w
+
+      def self.origin
+        new(0, 0, 0, 0)
+      end
+
+      def self.ordinals
+        ordinals = [-1, 0, 1].repeated_permutation(4).map { new(_1, _2, _3, _4) }
+        ordinals.delete(origin)
+        ordinals
+      end
+
+      def initialize(x, y, z, w)
+        @x, @y, @z, @w = x, y, z, w
+      end
+
+      def +(other)
+        self.class.new(x + other.x, y + other.y, z + other.z, w + other.w)
+      end
+
+      def ==(other)
+        return false unless other.is_a?(self.class)
+
+        x == other.x && y == other.y && z == other.z && w == other.w
+      end
+
+      alias_method :eql?, :==
+
+      def hash
+        [x, y, z, w].hash
       end
     end
   end
