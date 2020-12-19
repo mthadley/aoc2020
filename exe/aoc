@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 $LOAD_PATH.unshift File.expand_path("../lib", __dir__)
 
+require "rubygems"
+require "bundler/setup"
+
 require "advent_of_code"
 
 AdventOfCode.play!
