@@ -1,4 +1,5 @@
 require "parslet"
+require "set"
 
 module AdventOfCode
   class Day19 < Day
@@ -16,6 +17,15 @@ module AdventOfCode
       input[:messages].count { |msg| regex.match?(msg) }
     end
 
+    part2 answer: 282 do
+      ruleset = RuleSet.new(rules)
+      ruleset.add(RefRule.new(8, [[42], [42, 8]]))
+      ruleset.add(RefRule.new(11, [[42, 31], [42, 11, 31]]))
+
+      regex = ruleset.to_regex
+      input[:messages].count { |msg| regex.match?(msg) }
+    end
+
     private
 
     def rules
@@ -28,6 +38,10 @@ module AdventOfCode
         @rules = rules.to_h { |rule| [rule.id, rule] }
       end
 
+      def add(rule)
+        @rules[rule.id] = rule
+      end
+
       def to_s
         go_s(0)
       end
@@ -38,16 +52,21 @@ module AdventOfCode
 
       private
 
-      def go_s(id)
+      def go_s(id, loops = 0)
         rule = @rules.fetch(id)
 
         case rule
         when LiteralRule
           rule.char
         when RefRule
+          # I kept upping the number of loops until the number of
+          # matching messages stopped increasing. :shrug-emoji:
+          return if loops == 6
+          loops += 1 if [8, 11].include?(id)
+
           result = rule.sub_rules.map do |sub_rule|
             sub_rule.map do |sub_id|
-              go_s(sub_id)
+              go_s(sub_id, loops)
             end.join
           end.join("|")
 
