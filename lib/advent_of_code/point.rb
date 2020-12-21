@@ -43,6 +43,10 @@ module AdventOfCode
       self.class.new(x + other.x, y + other.y)
     end
 
+    def %(mod)
+      self.class.new(x % mod, y % mod)
+    end
+
     def *(number)
       fail ArgumentError, "#{number.class} is not a number" unless number.is_a?(Numeric)
 
