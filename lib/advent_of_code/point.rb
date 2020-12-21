@@ -38,6 +38,11 @@ module AdventOfCode
 
       x == other.x && y == other.y
     end
+    alias_method :eql?, :==
+
+    def hash
+      [x, y].hash
+    end
 
     def +(other)
       self.class.new(x + other.x, y + other.y)
@@ -45,6 +50,10 @@ module AdventOfCode
 
     def %(mod)
       self.class.new(x % mod, y % mod)
+    end
+
+    def /(mod)
+      self.class.new(x / mod, y / mod)
     end
 
     def *(number)

@@ -1,3 +1,5 @@
+require "set"
+
 module AdventOfCode
   class Day20 < Day
     input_file split_lines: false do |content|
@@ -9,11 +11,24 @@ module AdventOfCode
       TileSet.new(tiles).corners.map(&:id).inject(:*)
     end
 
-    part2 do
-      TileSet.new(tiles).print_image
+    part2 answer: 2146 do
+      tile_set = TileSet.new(tiles).remove_borders!
+
+      5.times do |i|
+        break if tile_set.count_monster_waves.nonzero?
+        tile_set.rotate!
+      end
+
+      tile_set.count_monster_waves
     end
 
     class TileSet
+      MONSTER = <<-MONSTER.gsub(/z/, " ").lines(chomp: true).map(&:chars).freeze
+                  #z
+#    ##    ##    ###
+ #  #  #  #  #  #  z
+      MONSTER
+
       def initialize(tiles)
         @tiles_by_id = tiles.to_h { |t| [t.id, t] }
         @tiles_by_edge_id = tiles.each_with_object({}) do |tile, hash|
@@ -37,30 +52,65 @@ module AdventOfCode
       end
 
       def image
-        @image ||= begin
-          align_tiles
-          @image
-        end
+        @image ||=
+          begin
+            align_tiles
+            @image
+          end
       end
 
-      def rotate_right!
-        image.map!(&:rotate_right)
+      def rotate!
+        @image = image.map { |row| row.map(&:rotate) }.transpose.reverse
+        self
       end
 
       def flip!
-        image.map!(&:flip)
+        @image = image.map { |row| row.map(&:flip).reverse }
+        self
       end
 
-      def print_image
-        total_dimen = image_dimen * tile_dimen
+      def remove_borders!
+        image.flatten.each(&:remove_borders!)
+        self
+      end
 
-        (0..total_dimen - 1).each do |y|
-          (0..total_dimen - 1).each do |x|
-            point = Point.new(x, y)
-            print at(point % image_dimen).at(point % tile_dimen)
-          end
-          puts
+      def count_monster_waves
+        monster_points = Set.new
+        each_char_pos do |point|
+          monster_points.merge(monster_points_at(point))
         end
+
+        return 0 if monster_points.empty?
+
+        count = 0
+        each_char_pos do |point, char|
+          if char == "#" && !monster_points.member?(point)
+            count += 1
+          end
+        end
+        count
+      end
+
+      def monster_points_at(char_point)
+        points = Set.new
+        each_monster_pos do |point, monster_char|
+          return Set.new unless image_char = char_at(char_point + point)
+
+          if monster_char == "#"
+            return Set.new if image_char != monster_char
+            points.add(char_point + point) if image_char == "#"
+          end
+        end
+        points
+      end
+
+      def to_s
+        s = ""
+        each_char_pos do |point, char|
+          s << "\n" if point.x.zero? && point.y >= 1
+          s << char
+        end
+        s
       end
 
       private
@@ -87,32 +137,35 @@ module AdventOfCode
 
         @image[0][0] = corner_tile
 
-        each_cell do |point|
-          next unless at(point).nil?
+        each_tile_pos do |point|
+          next unless tile_at(point).nil?
 
-          if last = at(point + Point.west)
+          if last = tile_at(point + Point.west)
             match = nil
             match_for(last.right_edge_id, last).
               rotations.
               each do |tile|
-               if tile.left_edge_id == last.right_edge_id
-                 match = tile
-                 break
-               end
+                if tile.left_edge_id == last.right_edge_id
+                  match = tile
+                  break
+                end
               end
 
-            set(point, match)
+            @image[point.y][point.x] = match
           else
-            last = at(point + Point.south)
+            last = tile_at(point + Point.south)
 
-            match =
-              match_for(last.bottom_edge_id, last).
+            match = nil
+            match_for(last.bottom_edge_id, last).
               rotations.
               find do |tile|
-                tile.top_edge_id == last.bottom_edge_id
+                if tile.top_edge_id == last.bottom_edge_id
+                  match = tile
+                  break
+                end
               end
 
-            set(point, match)
+            @image[point.y][point.x] = match
           end
         end
       end
@@ -122,26 +175,48 @@ module AdventOfCode
       end
 
       def tile_dimen
-        tiles.first.dimen
+        image[0][0].dimen
       end
 
-      def at(point)
+      def tile_at(point)
         image[point.y]&.at(point.x)
       end
 
-      def set(point, tile)
-        image[point.y][point.x] = tile
+      def char_at(point)
+        tile_at(point / tile_dimen)&.at(point % tile_dimen)
       end
 
-      def each_cell
+      def each_tile_pos
         (0..image_dimen - 1).each do |y|
           (0..image_dimen - 1).each do |x|
             yield Point.new(x, y)
           end
         end
       end
-    end
 
+      def each_char_pos
+        total_dimen = image_dimen * tile_dimen
+
+        (0..total_dimen - 1).each do |y|
+          (0..total_dimen - 1).each do |x|
+            point = Point.new(x, y)
+
+            yield point, char_at(point)
+          end
+        end
+      end
+
+      def each_monster_pos
+        monster_x = MONSTER.first.size
+        monster_y = MONSTER.size
+
+        (0..monster_y - 1).each do |y|
+          (0..monster_x - 1).each do |x|
+            yield Point.new(x, y), MONSTER[y][x]
+          end
+        end
+      end
+    end
 
     class Tile
       attr_reader :id, :data
@@ -159,7 +234,12 @@ module AdventOfCode
         @id, @data = id, data
       end
 
-      def rotate_right
+      def remove_borders!
+        @data = data.map { |row| row[1..-2] }[1..-2]
+        self
+      end
+
+      def rotate
         self.class.new(id: id, data: data.transpose.reverse)
       end
 
@@ -194,7 +274,7 @@ module AdventOfCode
           res << current
           res << current.flip
 
-          current = current.rotate_right
+          current = current.rotate
         end
       end
 
@@ -203,7 +283,7 @@ module AdventOfCode
       end
 
       def dimen
-        @data.first.size
+        @data.size
       end
     end
   end
