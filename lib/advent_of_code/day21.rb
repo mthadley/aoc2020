@@ -16,6 +16,11 @@ module AdventOfCode
       end
     end
 
+    part2 answer: "lmxt,rggkbpj,mxf,gpxmf,nmtzlj,dlkxsxg,fvqg,dxzq" do
+      ing_to_alg = recipes.ingredients_to_allergen
+      ing_to_alg.keys.sort_by { |ing| ing_to_alg[ing] }.join(",")
+    end
+
     class Recipes
       attr_reader :recipes
 
@@ -25,21 +30,48 @@ module AdventOfCode
         @recipes = recipes
       end
 
+      def ingredients_to_allergen
+        alg_to_ing = {}
+
+        recipes.each do |recipe|
+          recipe.allergens.each do |allergen|
+            alg_to_ing[allergen] ||= Set.new(recipe.ingredients)
+            alg_to_ing[allergen] = alg_to_ing[allergen].intersection(
+              recipe.ingredients - safe_ingredients
+            )
+          end
+        end
+
+        res = {}
+
+        until alg_to_ing.values.empty?
+          alg, ings = alg_to_ing.find { |_, ings| ings.size == 1 }
+          ing = ings.first
+
+          alg_to_ing.delete(alg)
+          alg_to_ing.each_value { |ings| ings.delete(ing) }
+
+          res[ing] = alg
+        end
+
+        res
+      end
+
       def safe_ingredients
         all_ingredients - unsafe_ingredients
       end
 
       def unsafe_ingredients
-        allerg_to_ing = {}
+        alg_to_ing = {}
 
         recipes.each do |recipe|
-          recipe.allergens.each do |ing|
-            allerg_to_ing[ing] ||= Set.new(recipe.ingredients)
-            allerg_to_ing[ing] = allerg_to_ing[ing].intersection(recipe.ingredients)
+          recipe.allergens.each do |alg|
+            alg_to_ing[alg] ||= Set.new(recipe.ingredients)
+            alg_to_ing[alg] = alg_to_ing[alg].intersection(recipe.ingredients)
           end
         end
 
-        allerg_to_ing.values.reduce(:union)
+        alg_to_ing.values.reduce(:union)
       end
 
       def all_ingredients
