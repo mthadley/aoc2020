@@ -10,7 +10,7 @@ module AdventOfCode
       cups.find { |node| node.val == 1 }.drop(1).map(&:val).join
     end
 
-    part2 answer: 149245887792  do
+    part2 answer: 664642452305  do
       nums = INPUT.chars.map(&:to_i)
 
       cups = Node.from(nums + (nums.max + 1..1_000_000).to_a)
