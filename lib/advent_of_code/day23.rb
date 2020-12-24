@@ -1,37 +1,96 @@
 module AdventOfCode
   class Day23 < Day
-    # INPUT = "389125467"
     INPUT = "853192647"
 
     part1 answer: "97624853" do
-      cups = shuffle_cups(INPUT.chars.map(&:to_i))
-      take_circular(cups, cups.size - 1, start: cups.index(1) + 1).join
+      cups = Node.from(INPUT.chars.map(&:to_i))
+      cups = shuffle_cups(cups, iterations: 100)
+      cups.find { |node| node.val == 1 }.drop(1).map(&:val).join
     end
 
     private
 
-    def shuffle_cups(cups)
-      i = 0
-      100.times do
-        current = cups[i]
+    def shuffle_cups(cups, iterations:)
+      index = cups.each_with_object({}) do |node, hash|
+        hash[node.val] = node
+      end
+      cups_max = cups.max.val
 
-        selection = take_circular(cups, 3, start: i + 1)
-        cups -= selection
-        rest = take_circular(cups, cups.size - 1, start: i + 1).sort.reverse
+      current = cups
+      iterations.times do
+        selection = current.next.take(3)
+        selection_values = selection.map(&:val)
 
-        target = rest.find { _1 < current } || rest.max
-        target_index = cups.index(target)
+        current.next = current.next.next.next.next
 
-        cups = cups[0..target_index] + selection + cups[target_index + 1..-1]
+        target_val = (current.val - 1).downto(1).find { !selection_values.include?(_1) }
+        target_val ||= (cups_max).downto(1).find { !selection_values.include?(_1) }
 
-        i = (cups.index(current) + 1) % cups.size
+        target_node = index.fetch(target_val)
+        target_node_next = target_node.next
+
+        target_node.next = selection.first
+        selection.last.next = target_node_next
+
+        current = current.next
       end
 
-      cups
+      current
     end
 
-    def take_circular(arr, count, start: 0)
-      count.times.map { |i| arr[(start + i) % arr.size] }
+    class Node
+      include Enumerable
+      include Comparable
+
+      attr_accessor :val, :next
+
+      def initialize(val, next: nil)
+        @val = val
+        @next = binding.local_variable_get(:next)
+      end
+
+      def <=>(other)
+        val <=> other.val
+      end
+
+      def ==(other)
+        return false unless other.is_a?(self.class)
+
+        val == other.val
+      end
+
+      def self.from(enumerable)
+        current = nil
+        head = nil
+
+        enumerable.each do |val|
+          if current.nil?
+            current = new(val)
+            head = current
+          else
+            current.next = new(val)
+            current = current.next
+          end
+        end
+
+        current.next = head
+        head
+      end
+
+      def each
+        start = self
+        current = self
+
+        loop do
+          yield current
+          current = current.next
+          break if current == start
+        end
+      end
+
+      def inspect
+        "<Node @val=#{val}>"
+      end
     end
   end
 end
