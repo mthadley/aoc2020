@@ -2,6 +2,8 @@ module AdventOfCode
   class Day23 < Day
     INPUT = "853192647"
 
+    slow!
+
     part1 answer: "97624853" do
       cups = Node.from(INPUT.chars.map(&:to_i))
       cups = shuffle_cups(cups, iterations: 100)
