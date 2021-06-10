@@ -18,7 +18,10 @@ module AdventOfCode
       if @options.day
         puts for_day(@options.day)
       else
-        puts all_days.map { |day| for_day(day, skip_slow: true) }.join("\n")
+        all_days.each do |day|
+          puts for_day(day, skip_slow: true)
+          puts
+        end
       end
     end
 
